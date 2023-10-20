@@ -1,0 +1,61 @@
+//构建资源
+buildscript {
+    ext {
+        springBootVersion = '3.1.2'
+        mysqlVersion = '8.0.32'
+        mybatisVersion = '3.5.3.1'
+        lombokVersion = '1.18.26'
+    }
+
+    repositories {
+        mavenLocal()
+        maven { url 'https://maven.aliyun.com/repository/public/' }
+        maven { url 'https://maven.aliyun.com/repository/spring/' }
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+//全局配置
+allprojects {
+    apply plugin: 'java'
+    group 'com.lain'
+    version '1.0.0'
+    sourceCompatibility = 21
+    targetCompatibility = 21
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+    }
+
+    repositories {
+        mavenLocal()
+        maven { url 'https://maven.aliyun.com/repository/public/' }
+        maven { url 'https://maven.aliyun.com/repository/spring/' }
+        mavenCentral()
+    }
+}
+
+//子项目配置
+subprojects {
+    apply plugin: 'io.spring.dependency-management'
+
+    dependencies {
+        implementation 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+    }
+
+    dependencyManagement {
+        dependencies {
+            dependency "org.projectlombok:lombok:${lombokVersion}"
+            dependency "mysql:mysql-connector-java:${mysqlVersion}"
+            dependency "com.baomidou:mybatis-plus-boot-starter:${mybatisVersion}"
+        }
+        imports {
+            mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
+        }
+    }
+}
